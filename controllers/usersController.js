@@ -54,11 +54,17 @@ const putUser = async ( req, res = response ) => {
 const deleteUser = async ( req, res = response ) => {
     const { id } = req.params;
 
+    const uuid = req.uuid;
+
     // Delete permantenly
     //const user = await User.findByIdAndUpdate( id );
 
     const user = await User.findByIdAndUpdate( id, { state: false }, { new: true }  )
-    res.json( user);
+    const authUser = req.AuthUser;
+    res.json({
+        user,
+        authUser
+    });
 }
 
 
