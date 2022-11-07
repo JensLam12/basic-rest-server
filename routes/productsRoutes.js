@@ -1,40 +1,41 @@
 const { Router } = require('express');
 const { body } = require('express-validator');
-const { createCategory, obtainCategories, obtainCategory, updateCategory, deleteCategory } = require('../controllers/categoryController');
+const { createProduct, obtainProducts, obtainProduct, updateProduct, deleteProduct } = require('../controllers/productController');
 const { validateFields, validateJWT, isAdminRole } = require('../middlewares');
-const { validateExistsCategory} = require('../helpers/db-validator')
+const { validateExistsCategory, validateExistsProduct} = require('../helpers/db-validator')
 
 const router = Router();
 
 router.get('/', [
     validateJWT,
     validateFields
-],obtainCategories);
+], obtainProducts);
 
 router.get('/:id', [
     validateJWT,
-    body('id').custom(validateExistsCategory),
+    body('id').custom(validateExistsProduct),
     validateFields
-], obtainCategory);
+], obtainProduct);
 
 router.post('/', [
     validateJWT,
     body( 'name', 'Name is required').not().isEmpty(),
+    body('categoryId').custom(validateExistsCategory),
     validateFields
-], createCategory);
+], createProduct);
 
 router.put('/:id',[
     validateJWT,
     body( 'name', 'Name is required').not().isEmpty(),
-    body('id').custom(validateExistsCategory),
+    body('id').custom(validateExistsProduct),
     validateFields
-], updateCategory);
+], updateProduct);
 
 router.delete('/:id', [
     validateJWT,
     isAdminRole,
-    body('id').custom(validateExistsCategory),
+    body('id').custom(validateExistsProduct),
     validateFields
-], deleteCategory);
+], deleteProduct);
 
 module.exports = router;

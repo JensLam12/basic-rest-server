@@ -1,8 +1,6 @@
 const { response } = require('express');
 const { Category } = require('../models');
 
-//obtenercategoria - populate {}
-
 const obtainCategories = async (req, res = response) => {
     const { limit = 5, since = 1 } = req.query;
     const query = { state: true };
@@ -48,11 +46,27 @@ const createCategory = async( req, res = response) => {
     res.status(201).json(category);
 }
 
-//actualizar categoria
-// borrar categoria - estado : false
+const updateCategory = async( req,res = response ) => {
+    const { id } = req.params;
+    const { state, user, ...data } = req.body;
+
+    data.name = data.name.toUpperCase();
+    data.user = req.AuthUser._id;
+
+    const category = await Category.findByIdAndUpdate( id, data, {new: true });
+    res.status(201).json(category);
+}
+
+const deleteCategory = async (req, res = response) => {
+    const { id } = req.params;
+    const deletedCategory = await Category.findByIdAndUpdate(id, {state: false}, {new: true} );
+    res.status(200).json( deletedCategory);
+}
 
 module.exports = {
     createCategory,
     obtainCategories,
-    obtainCategory
+    obtainCategory,
+    updateCategory,
+    deleteCategory
 }
